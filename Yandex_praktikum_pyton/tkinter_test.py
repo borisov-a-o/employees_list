@@ -34,6 +34,7 @@ def print_employee_list():
     return results
 '''
 
+
 # Открываем окно сотрудников и выводим их список
 def open_employee_list_window():
     window_employee_list = Tk()
@@ -179,7 +180,7 @@ def open_employee_edit_window():
     window_employee_edit.title("Редактирование сотрудников")
     window_employee_edit.geometry("700x600")
     # Выбор сотрудника для редактирования
-    lbl_window_employee_edit = ttk.Label(window_employee_edit, text="Выберете номер сотрудника из списка",
+    lbl_window_employee_edit = ttk.Label(window_employee_edit, text="Выберете ФИО сотрудника из списка",
                                          justify=LEFT)  # создаем текстовую метку
     lbl_window_employee_edit.pack()
     employee_combobox_request()
@@ -258,13 +259,13 @@ label = Label(text="Выберете пункт меню для взаимоде
 label.pack()
 
 # стандартная кнопка
-btn_employees_list = ttk.Button(text="Посмотреть список всех сотрудников", command=open_employee_list_window)
+btn_employees_list = ttk.Button(text="Посмотреть список всех сотрудников", command=open_employee_list_window, width=50)
 btn_employees_list.pack()
-btn_employees_insert = ttk.Button(text="Добавить сотрудника", command=open_employee_insert_window)
+btn_employees_insert = ttk.Button(text="Добавить сотрудника", command=open_employee_insert_window, width=50)
 btn_employees_insert.pack()
-btn_employees_edit = ttk.Button(text="Отредактировать информацию о сотруднике", command=open_employee_edit_window)
+btn_employees_edit = ttk.Button(text="Отредактировать информацию о сотруднике", command=open_employee_edit_window, width=50)
 btn_employees_edit.pack()
-btn_employees_delete = ttk.Button(text="Удалить информацию о сотруднике", command=open_employee_delete_window)
+btn_employees_delete = ttk.Button(text="Удалить информацию о сотруднике", command=open_employee_delete_window, width=50)
 btn_employees_delete.pack()
 
 root.mainloop()
