@@ -9,7 +9,7 @@ my_table = PrettyTable()
 my_table.field_names = ["No.", "ФИО", "Birthday", "Salary"]
 cmb_employees_value = []
 
-
+'''
 # Печать списка сотрудников в окне (на удаление)
 def print_employee_list():
     my_table.clear_rows()
@@ -32,7 +32,7 @@ def print_employee_list():
     connection.close()
     print('\n')
     return results
-
+'''
 
 # Открываем окно сотрудников и выводим их список
 def open_employee_list_window():
@@ -81,23 +81,29 @@ def open_employee_insert_window():
         # Сохраняем изменения и закрываем соединение
         connection.commit()
         connection.close()
+        n = '\n'
+        showinfo(title="Сотрудник добавлен",
+                 message=f'Сотрудник{n}ФИО: "{employee_fio}"{n}День Рожднения: {employee_birthday}{n} ЗП: "{employee_salary}"{n}Успешно добавлен!')
+        ent_fio.delete(0, END)
+        ent_birthday.delete(0, END)
+        ent_salary.delete(0, END)
 
-    window_employee_list = Tk()
-    window_employee_list.title("Добавление сотрудников")
-    window_employee_list.geometry("700x600")
-    lbl_fio = Label(window_employee_list, text="Введите фамилию нового сотрудника")
+    window_employee_insert = Tk()
+    window_employee_insert.title("Добавление сотрудников")
+    window_employee_insert.geometry("700x600")
+    lbl_fio = Label(window_employee_insert, text="Введите фамилию нового сотрудника")
     lbl_fio.pack()
-    ent_fio = Entry(window_employee_list, width=50)
+    ent_fio = Entry(window_employee_insert, width=50)
     ent_fio.pack()
-    lbl_birthday = Label(window_employee_list, text="Введите дату рождения нового сотрудника")
+    lbl_birthday = Label(window_employee_insert, text="Введите дату рождения нового сотрудника")
     lbl_birthday.pack()
-    ent_birthday = Entry(window_employee_list, width=50)
+    ent_birthday = Entry(window_employee_insert, width=50)
     ent_birthday.pack()
-    lbl_salary = Label(window_employee_list, text="Введите ЗП нового сотрудника")
+    lbl_salary = Label(window_employee_insert, text="Введите ЗП нового сотрудника")
     lbl_salary.pack()
-    ent_salary = Entry(window_employee_list, width=50)
+    ent_salary = Entry(window_employee_insert, width=50)
     ent_salary.pack()
-    btn_employees_insert_action = Button(window_employee_list, text="Добавить сотрудника", command=employee_insert)
+    btn_employees_insert_action = Button(window_employee_insert, text="Добавить сотрудника", command=employee_insert)
     btn_employees_insert_action.pack()
 
 
@@ -137,7 +143,8 @@ def open_employee_edit_window():
             # Сохраняем изменения и закрываем соединение
             connection.commit()
             connection.close()
-            showinfo(title="ФИО сотрудника изменено!", message=f'ФИО сотрудника "{employee_fio}" изменена на "{employee_data}"')
+            showinfo(title="ФИО сотрудника изменено!",
+                     message=f'ФИО сотрудника "{employee_fio}" изменена на "{employee_data}"')
         elif employee_type == "День Рождения":
             # Устанавливаем соединение с базой данных
             connection = sqlite3.connect('employees_database.db')
@@ -151,7 +158,7 @@ def open_employee_edit_window():
             connection.commit()
             connection.close()
             showinfo(title="День рождения сотрудника изменен!",
-                     message=f'День Рождения сотрудника "{employee_fio}" изменена на "{employee_data}"')
+                     message=f'День Рождения сотрудника "{employee_fio}" изменен на "{employee_data}"')
         elif employee_type == "ЗП":
             # Устанавливаем соединение с базой данных
             connection = sqlite3.connect('employees_database.db')
@@ -166,6 +173,7 @@ def open_employee_edit_window():
             connection.close()
             showinfo(title="ЗП сотрудника изменена!",
                      message=f'ЗП сотрудника "{employee_fio}" изменена на "{employee_data}"')
+        window_employee_edit.destroy()
 
     window_employee_edit = Tk()
     window_employee_edit.title("Редактирование сотрудников")
@@ -193,11 +201,53 @@ def open_employee_edit_window():
 
 
 def open_employee_delete_window():
-    window_employee_list = Tk()
-    window_employee_list.title("Удаление сотрудников")
-    window_employee_list.geometry("700x600")
-    lbl_window_employee_delete = ttk.Label(window_employee_list, text=my_table, justify=LEFT)  # создаем текстовую метку
+    def employee_combobox_request():
+
+        cmb_employees_value.clear()
+        # Устанавливаем соединение с базой данных
+        connection = sqlite3.connect('employees_database.db')
+        cursor = connection.cursor()
+
+        # Выбираем и сортируем пользователей по возрасту по убыванию
+        cursor.execute('SELECT employee_id, employee_FIO FROM employees')
+        results = cursor.fetchall()
+        if len(results) > 0:
+            for i in range(len(results)):
+                cmb_employees_value.append(results[i][1])
+
+        else:
+            cmb_employees_value.append = "список сотрудников пуст!"
+        return results, cmb_employees_value
+
+    def employee_delete_confrim():
+        employee_fio = cmb_employees.get()
+        # Устанавливаем соединение с базой данных
+        connection = sqlite3.connect('employees_database.db')
+        cursor = connection.cursor()
+
+        # Добавляем нового пользователя
+        cursor.execute('DELETE FROM Employees WHERE employee_FIO = ?', (employee_fio,))
+
+        # Сохраняем изменения и закрываем соединение
+        connection.commit()
+        connection.close()
+        showinfo(title="Сотрудник удален!",
+                 message=f'Сотрудник "{employee_fio}" удален!')
+        window_employee_delete.destroy()
+
+    window_employee_delete = Tk()
+    window_employee_delete.title("Удаление сотрудников")
+    window_employee_delete.geometry("700x600")
+    lbl_window_employee_delete = ttk.Label(window_employee_delete, text="Выберете сотрудника для удаления",
+                                           justify=LEFT)  # создаем текстовую метку
     lbl_window_employee_delete.pack()
+    # Выбор сотрудника для удаления
+    employee_combobox_request()
+    cmb_employees = ttk.Combobox(window_employee_delete, values=cmb_employees_value, width=50)
+    cmb_employees.pack()
+    # Кнопка подтверждения редактирования
+    btn_employee_delete = ttk.Button(window_employee_delete, text="Удалить", command=employee_delete_confrim)
+    btn_employee_delete.pack()
 
 
 root = Tk()  # создаем корневой объект - окно
